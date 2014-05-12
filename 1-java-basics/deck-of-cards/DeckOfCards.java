@@ -3,8 +3,13 @@ import java.io.IOException;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Font.FontFamily;
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPCell;
 
@@ -12,12 +17,12 @@ public class DeckOfCards {
 
     public static final String FILENAME = "Deck-of-Cards.pdf";
 
-    public static final String SPADES = "Spades";
-    public static final String HEARTS = "Hearts";
-    public static final String DIAMONDS = "Diamonds";
-    public static final String CLUBS = "Clubs";
+    public static final char SPADES = '\u2660';
+    public static final char HEARTS = '\u2665';
+    public static final char DIAMONDS = '\u2666';
+    public static final char CLUBS = '\u2663';
 
-    public static final String[] CARD_COLORS = new String[]{
+    public static final char[] CARD_COLORS = new char[]{
         SPADES,
         HEARTS,
         DIAMONDS,
@@ -40,13 +45,23 @@ public class DeckOfCards {
         "K"
     };
 
+    public static FontFamily FONT = Font.FontFamily.HELVETICA;
+
+    protected static BaseFont baseFont;
+    protected static Font blackFont;
+    protected static Font redFont;
+
     public static void main(String[] args)
         throws DocumentException, IOException {
 
         String workingDir = System.getProperty("user.dir");
         String absolutefileName = workingDir + "/" + FILENAME;
 
-        new DeckOfCards().createPdf(absolutefileName);
+        DeckOfCards deck = new DeckOfCards();
+        deck
+            .setBlackFont(deck.createBlackFont())
+            .setRedFont(deck.createRedFont())
+            .createPdf(absolutefileName);
     }
 
     public void createPdf(String fileName)
@@ -72,8 +87,8 @@ public class DeckOfCards {
 
         for (i = 0; i < numberOfCardTypes; i++) {
             for (j = 0; j < numberOfCardColors; j++ ) {
-                Paragraph paragraph = new Paragraph(getCard(i, j));
-                PdfPCell cell = new PdfPCell(paragraph);
+                Paragraph card = getCard(CARD_TYPES[i], CARD_COLORS[j]);
+                PdfPCell cell = new PdfPCell(card);
                 table.addCell(cell);
             }
         }
@@ -81,8 +96,55 @@ public class DeckOfCards {
         return table;
     }
 
-    protected String getCard(Integer cardType, Integer cardColor) {
-        return CARD_TYPES[cardType] + " " + CARD_COLORS[cardColor];
+    public Paragraph getCard(String cardType, char cardColor) {
+        Phrase type = new Phrase(cardType, getBlackFont());
+        Phrase color = new Phrase(cardColor);
+
+        switch (cardColor) {
+            case SPADES:
+            case CLUBS:
+                color.setFont(getBlackFont());
+            break;
+            case HEARTS:
+            case DIAMONDS:
+                color.setFont(getRedFont());
+            break;
+        }
+
+        Paragraph card = new Paragraph();
+
+        card.add(type);
+        card.add(color);
+
+        return card;
+    }
+
+    public Font createBlackFont() {
+        return new Font(FONT, 75f, 0, BaseColor.BLACK);
+    }
+
+    public DeckOfCards setBlackFont(Font font) {
+        this.blackFont = font;
+
+        return this;
+    }
+
+    public Font getBlackFont() {
+        return this.blackFont;
+    }
+
+    public Font createRedFont() {
+        return new Font(FONT, 75f, 0, BaseColor.RED);
+    }
+
+    public DeckOfCards setRedFont(Font font) {
+        this.redFont = font;
+
+        return this;
+    }
+
+    public Font getRedFont() {
+        return this.redFont;
     }
 }
 
