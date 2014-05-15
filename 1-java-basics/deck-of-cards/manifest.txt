@@ -1,0 +1,2 @@
+Main-Class: DeckOfCards
+Class-Path: lib/itextpdf-5.4.5.jar .
