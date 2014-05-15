@@ -45,7 +45,11 @@ public class DeckOfCards {
         "K"
     };
 
-    public static FontFamily FONT = Font.FontFamily.HELVETICA;
+    public static String FONT_PATH = "arial.ttf";
+    public static final float fontSize = 75f;
+    public static final int fontStyle = 0;
+    public static final BaseColor blackColor = BaseColor.BLACK;
+    public static final BaseColor redColor = BaseColor.RED;
 
     protected static BaseFont baseFont;
     protected static Font blackFont;
@@ -57,11 +61,12 @@ public class DeckOfCards {
         String workingDir = System.getProperty("user.dir");
         String absolutefileName = workingDir + "/" + FILENAME;
 
+        baseFont = BaseFont.createFont(workingDir + "/" + FONT_PATH, "UTF-8", BaseFont.EMBEDDED);
+        blackFont = new Font(baseFont, fontSize, fontStyle, blackColor);
+        redFont = new Font(baseFont, fontSize, fontStyle, redColor);
+
         DeckOfCards deck = new DeckOfCards();
-        deck
-            .setBlackFont(deck.createBlackFont())
-            .setRedFont(deck.createRedFont())
-            .createPdf(absolutefileName);
+        deck.createPdf(absolutefileName);
     }
 
     public void createPdf(String fileName)
@@ -97,17 +102,17 @@ public class DeckOfCards {
     }
 
     public Paragraph getCard(String cardType, char cardColor) {
-        Phrase type = new Phrase(cardType, getBlackFont());
+        Phrase type = new Phrase(cardType, blackFont);
         Phrase color = new Phrase(cardColor);
 
         switch (cardColor) {
             case SPADES:
             case CLUBS:
-                color.setFont(getBlackFont());
+                color.setFont(blackFont);
             break;
             case HEARTS:
             case DIAMONDS:
-                color.setFont(getRedFont());
+                color.setFont(redFont);
             break;
         }
 
@@ -117,34 +122,6 @@ public class DeckOfCards {
         card.add(color);
 
         return card;
-    }
-
-    public Font createBlackFont() {
-        return new Font(FONT, 75f, 0, BaseColor.BLACK);
-    }
-
-    public DeckOfCards setBlackFont(Font font) {
-        this.blackFont = font;
-
-        return this;
-    }
-
-    public Font getBlackFont() {
-        return this.blackFont;
-    }
-
-    public Font createRedFont() {
-        return new Font(FONT, 75f, 0, BaseColor.RED);
-    }
-
-    public DeckOfCards setRedFont(Font font) {
-        this.redFont = font;
-
-        return this;
-    }
-
-    public Font getRedFont() {
-        return this.redFont;
     }
 }
 

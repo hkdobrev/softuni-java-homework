@@ -15,3 +15,5 @@ On Linux or another Unix-like system use `:` instead of `;` as a separator:
     javac -cp "path/to/itextpdf-5.4.5.jar:*" DeckOfCards.java
     java -cp "path/to/itextpdf-5.4.5.jar:*" DeckOfCards
 
+
+You need to have `arial.ttf` and place it the same directory.
